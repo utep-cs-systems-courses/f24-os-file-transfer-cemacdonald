@@ -14,11 +14,8 @@ def decode(connection):
     ack = connection.recv(1024).decode()
     print(f"Acknowledgment recieved: {ack}")
 def main():
-    host = '127.0.0.1'
-    port = 50000
-
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((host,port))
+    sock.connect(('127.0.0.1',50000))
 
     file = sys.argv[1]
     print("Client wants to send: {file}")
