@@ -2,7 +2,8 @@
 
 import sys,time,re,socket
 
-def encode(connection, file):
+#sends file to server
+def sender(connection, file):
     with open(file, 'rb') as file:
         fr = file.read()
     connection.sendall(file.encode())
@@ -10,9 +11,11 @@ def encode(connection, file):
     connection.sendall(fr)
     time.sleep(1)
     connection.sendall(b'end of file')
-def decode(connection):
+#acknowledgement from server verification
+def ack(connection):
     ack = connection.recv(1024).decode()
     print(f"Acknowledgment recieved: {ack}")
+#executes processes and sends to correct server
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(('127.0.0.1',50000))
