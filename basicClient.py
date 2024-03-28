@@ -22,10 +22,10 @@ def main():
 
     file = sys.argv[1]
     print("Client wants to send: {file}")
-    encode(sock,file)
+    sender(sock,file)
     print("Client sent file successfully")
 
-    decode(sock)
+    ack(sock)
     print("Client is tired of sending file, closing time!")
     sock.close()
 
