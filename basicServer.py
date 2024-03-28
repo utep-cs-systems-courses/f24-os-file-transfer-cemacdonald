@@ -45,7 +45,7 @@ def main():
     received_filename = connection.recv(1024).decode()
     print(f"Receiving file: {received_filename}")
 
-    receive_file(connection, received_filename)
+    receiver(connection, received_filename)
     print("File has been successfully received.")
 
     ack_message = "Acknowledged"
