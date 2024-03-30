@@ -1,16 +1,31 @@
-#! usr/bin/env python3
+#! /usr/bin/env python3
 
 import sys,time,re,socket
 
+
+def outBandFrame(files):
+    #error handling
+    for file in files:
+        if not os.path.exists(file):
+            print(f"File {file} does not exist", file=os.fdopen(2, 'w'))
+            return
+        #opening file for encoding
+        with open(file, "rb") as f:
+            contents = f.read()
+        #only framing header and size of file
+        file_size = len(contents)
+        file_header = f"{file}\n{file_size}\n".encode()
+
+        os.write(1, file_header)
+        os.write(1, contents)
 #sends file to server
 def sender(connection, file):
-    with open(file, 'rb') as file:
-        fr = file.read()
-    connection.sendall(file.encode())
-    time.sleep(1)
-    connection.sendall(fr)
-    time.sleep(1)
-    connection.sendall(b'end of file')
+    with open(file, 'rb') as f:
+        fr = f.read()
+    framed_file = outBandFrame(file)
+    connection.sendall(framed_file)
+    connection.sendall(b'eof')
+    
 #acknowledgement from server verification
 def ack(connection):
     ack = connection.recv(1024).decode()
