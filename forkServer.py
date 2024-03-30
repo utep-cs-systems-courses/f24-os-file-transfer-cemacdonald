@@ -39,19 +39,21 @@ def outBandDeframe(files):
 
 #processing client's file
 def receiver(connection):
+    #makes directory for new files
     folder = "transferred-files"
     os.makedirs(folder, exist_ok=True)
     filename = connection.recv(1024).decode()
     file_path = os.path.join(folder, filename)
-
+    #error handling 
     if os.path.isfile(file_path):
         os.remove(file_path)
         os.mkfifo(file_path)
     else:
         os.mkfifo(file_path)
 
+    #gets framed data from client
     framed_data = b""
-
+    
     with open(file_path,'wb') as file:
         while True:
             data = connection.recv(1024)
@@ -59,6 +61,7 @@ def receiver(connection):
                 break
             file.write(data)
             framed_data += data
+    #deframes framed data from client
     extracted_files, extracted_contents = outBandDeframe(file_path)
 
     os.remove(file_path)

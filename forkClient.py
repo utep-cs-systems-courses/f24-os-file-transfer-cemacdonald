@@ -3,6 +3,7 @@ import sys
 import socket
 import os
 
+#frames file for delivery
 def outBandFrame(files):
     framed_data = b""
     for file in files:
@@ -20,8 +21,10 @@ def outBandFrame(files):
     
     return framed_data
 
+
 def sender(connection, file):
     framed_file = outBandFrame([file])
+    #checks if the framed file isn't empty
     if framed_file is not None:
         connection.sendall(framed_file)
         connection.sendall(b'eof')
