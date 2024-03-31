@@ -74,16 +74,16 @@ def ack(connection, ack_message):
 #runs all methods for file transfer
 def main():
  
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('127.0.0.1',50000))
-    server_socket.listen(1)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(('127.0.0.1',50000))
+    sock.listen(1)
     
     host = '127.0.0.1'
     port = 50000
     
     print(f"Server is listening on {host}:{port}")
 
-    connection, address = server_socket.accept()
+    connection, address = sock.accept()
     print(f"Connection from {address}")
 
     incoming = connection.recv(1024).decode()
@@ -100,7 +100,7 @@ def main():
 
     connection.shutdown(socket.SHUT_WR)
     connection.close()
-    server_socket.close()
+    sock.close()
 
 if __name__ == "__main__":
     main()
