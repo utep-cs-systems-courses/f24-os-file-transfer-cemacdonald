@@ -32,7 +32,7 @@ def outBandDeframe(files):
         extracted_files.append(fname)
         extracted_contents.append(contents)
 
-    tar_file.close()
+    os.close()
 
     return extracted_files, extracted_contents
 
@@ -40,16 +40,16 @@ def outBandDeframe(files):
 #processing client's file
 def receiver(connection):
     #makes directory for new files
+    
     folder = "transferred-files"
     os.makedirs(folder, exist_ok=True)
     filename = connection.recv(1024).decode()
     file_path = os.path.join(folder, filename)
-    #error handling 
+    #error handling
+    
     if os.path.isfile(file_path):
         os.remove(file_path)
-        os.mkfifo(file_path)
-    else:
-        os.mkfifo(file_path)
+    os.mkfifo(file_path)
 
     #gets framed data from client
     framed_data = b""
@@ -73,7 +73,17 @@ def receiver(connection):
 def ack(connection, ack_message):
     ack_message = ack_message.encode()
     connection.sendall(ack_message)
-
+    
+def reap_zombies():
+    while True:
+        try:
+            # Reap child processes
+            pid, status = os.waitpid(-1, os.WNOHANG)
+            if pid == 0:
+                break
+            print(f"Child process {pid} terminated")
+        except OSError:
+            break
 
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -86,7 +96,7 @@ def main():
     print(f"Server is listening on {host}:{port}")
 
     while True:
-        # Accept a new connection
+        reap_zombies()
         connection, address = sock.accept()
         print(f"Connection from {address}")
 

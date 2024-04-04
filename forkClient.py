@@ -22,10 +22,9 @@ def outBandFrame(files):
     return framed_data
 
 
-def sender(connection, file):
-    framed_file = outBandFrame([file])
-    #checks if the framed file isn't empty
-    if framed_file is not None:
+def sender(connection, files):
+    framed_file = outBandFrame(files)
+    if framed_file:
         connection.sendall(framed_file)
         connection.sendall(b'eof')
 
@@ -34,12 +33,16 @@ def ack(connection):
     print(f"Acknowledgment received: {ack}")
 
 def main():
+    if len(sys.argv) < 2:
+        print("There needs to be more files to transfer :0")
+        return
+    
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(('127.0.0.1', 50000))
 
-    file = sys.argv[1]
-    print(f"Client wants to send: {file}")
-    sender(sock, file)
+    files = sys.argv[1:]
+    print(f"Client wants to send: {files}")
+    sender(sock, files)
     print("Client sent file successfully")
 
     ack(sock)
